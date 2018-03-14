@@ -1,59 +1,57 @@
 import { createDomElement, setAllProps } from "./util";
+import { mountComponents } from "./mountComponents";
+import { unmountComponents } from "./unmountComponents";
 
-export function updateComponents(element) {
-    // Receive an element and return the dom tree.
-    // It recursively create the dom tree from the element.
+export function updateComponents(compInstance, IS_ORIGIN, IS_FORCE_RENDER) {
+    let prevProps = compInstance.props;
+    let nextProps = !IS_ORIGIN ? compInstance._newProps : compInstance.props;
+    let prevState = IS_ORIGIN ? compInstance._prevState : compInstance.state;
+    let nextState = compInstance.state;
 
-    if (!element || typeof element === "string" || typeof element === "boolean") {
-        // It is a text node.
-        let text = "";
+    // Check shouldComponentUpdate
+    if (!IS_FORCE_RENDER && compInstance.shouldComponentUpdate && !compInstance.shouldComponentUpdate(nextProps, nextState)) {
+        // should not rerender component.
+        return;
+    }
+    if (!IS_ORIGIN) {
+        compInstance.componentWillReceiveProps && compInstance.componentWillReceiveProps(nextProps);
+    }
 
-        if (typeof element === "string") {
-            text = element;
+    compInstance.componentWillUpdate && compInstance.componentWillUpdate(nextProps, nextState);
+
+    compInstance.props = compInstance._nextProps;
+    compInstance._nextProps ? (delete compInstance._nextProps) : null;
+    compInstance._prevState ? (delete compInstance._prevState) : null;
+
+    let rendered = compInstance.render();
+
+    if (compInstance._rootComponent) {
+        // if last root component was a component
+        if (rendered.type === "function" && rendered.type === compInstance._rootComponent.constructor) {
+            // Root of last tree and new tree are same component. So start updating from that component
+            let rootComponent = compInstance._rootComponent;
+
+            rootComponent._nextProps = {...rendered.props, children: rendered.children};
+            updateComponent(rootComponent);
         }
-
-        let elem = document.createTextNode(text);
-
-        return elem;
     }
-    else if (typeof element.type === "string") {
-        // It is an html element.
-        let elem = createDomElement(element.type);
-        
-        setAllProps(elem, element.props);
+    else {
+        let newDom, oldDom = compInstance._domNode;
 
-        if (Array.isArray(element.children) && element.children.length > 0) {
-            element.children.map(function(child) {
-                let mountedChild = updateComponents(child);
-                // console.log(mountedChild)
-                elem.appendChild(mountedChild);
-            });
-        }
-        return elem;
-    }
-    else if (typeof element.type === "function") {
-        // It is a react component
-        let elem = processComponentUpdation(element);
-
-        return updateComponents(elem);
-    }
-};
-
-export function processComponentUpdation(element) {
-    if (typeof element.type === "function") {
-        if (element.type.prototype && element.type.prototype.render) {
-            // It is class based component
-            let compInstance = new element.type({...element.props, children: element.children});
-
-            compInstance.props = {...compInstance.props, ...element.props, children: element.children};
-            typeof compInstance.componentWillReceiveProps === "function" && compInstance.componentWillReceiveProps();
-            typeof compInstance.componentWillUpdate === "function" && compInstance.componentWillUpdate();
-
-            return compInstance.render();
+        if (rendered.type === "function") {
+            // Root component has changed in new tree.
+            newDom = mountComponents(rendered);
         }
         else {
-            // It is functional component
-            return element.type({...element.props, children: element.children})
+            newDom = diff(oldDom, rendered);
         }
+
+        if (oldDom && oldDom.parentNode) {
+            oldDom.parentNode.replaceChild(newDom, oldDom);
+        }
+
+        unmountComponents(oldDom);
     }
+
+    compInstance.componentDidUpdate && compInstance.componentDidUpdate(prevProps, prevState);
 }
