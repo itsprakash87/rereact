@@ -4,7 +4,7 @@ import { Component } from "./component";
 let deepnessLevel = 0;
 let didMountQueue = [];
 
-export function mountComponents(element) {
+export function mountComponents(element, parentComponentInstance) {
     // Receive an element and return the dom tree.
     // It recursively create the dom tree from the element.
 
@@ -39,13 +39,15 @@ export function mountComponents(element) {
         // It is a react component
         let compInstance = processComponentMounting(element);
         let renderedTree = compInstance.render && compInstance.render();
-        let mountedComp = mountComponents(renderedTree);
+        let mountedComp = mountComponents(renderedTree, compInstance);
 
         mountedComp._componentInstance = compInstance;
         mountedComp._componentConstructer = compInstance.constructor;
 
         compInstance._domNode = mountedComp;
-        compInstance._rootComponent = renderedTree && typeof renderedTree.type === "function" && renderedTree.type;
+        if (parentComponentInstance) {
+            parentComponentInstance._rootComponent = compInstance;
+        }
 
         didMountQueue.push(compInstance);
         returnElem = mountedComp;

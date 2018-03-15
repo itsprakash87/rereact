@@ -18,7 +18,11 @@ export function setProp(elem, propKey = "", propValue) {
         }
         return;
     }
-    if (propKey === "key" || propKey === "dangerouslySetInnerHTML") {
+    if (propKey === "key") {
+        elem.__key = propValue;
+        return;
+    }
+    if (propKey === "dangerouslySetInnerHTML") {
         return;
     }
     if (propKey.startsWith("on")) {
