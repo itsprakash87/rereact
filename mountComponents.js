@@ -15,7 +15,7 @@ export function mountComponents(element, parentComponentInstance) {
         // It is a text node.
         let text = "";
 
-        if (element) {
+        if (element !== null || typeof element !== "undefined") {
             text = element;
         }
 

@@ -28,7 +28,6 @@ export function updateComponents(compInstance, IS_ORIGIN, IS_FORCE_RENDER) {
 
     let rendered = compInstance.render();
 
-    console.log("1")
     if (compInstance._rootComponent) {
         // if last root component was a react component
         if (rendered.type === "function" && rendered.type === compInstance._rootComponent.constructor) {
@@ -51,7 +50,6 @@ export function updateComponents(compInstance, IS_ORIGIN, IS_FORCE_RENDER) {
             unmountComponents(oldDom);
         }
         else {
-            console.log("in else")
             newDom = diff(oldDom, rendered);
         }
     }
