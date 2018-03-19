@@ -38,7 +38,7 @@ export function mountComponents(element, parentComponentInstance) {
     else if (typeof element.type === "function") {
         // It is a react component
         let compInstance = processComponentMounting(element);
-        let renderedTree = compInstance.render && compInstance.render();
+        let renderedTree = compInstance.render && compInstance.render({...element.props, children: element.children});
         let mountedComp = mountComponents(renderedTree, compInstance);
 
         mountedComp._componentInstance = compInstance;
@@ -82,7 +82,7 @@ export function processComponentMounting(element) {
             let comp = new Component();
 
             comp.constructor = element.type;
-            comp.render = renderFunctionalComponent.bind(null, element.type, {...element.props, children: element.children});
+            comp.render = renderFunctionalComponent.bind(comp, element.type);
 
             return comp;
             // return element.type({...element.props, children: element.children})
@@ -91,7 +91,7 @@ export function processComponentMounting(element) {
 }
 
 export function renderFunctionalComponent(constructor, props) {
-    return constructor(props);
+    return constructor(props || this.props);
 }
 
 export function flushDidMountQueue() {
