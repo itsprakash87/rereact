@@ -1,4 +1,4 @@
-import { updateComponents } from "./updateComponents";
+import { updateComponents, enqueSetState } from "./updateComponents";
 
 export function Component(props) {
     this.props = props;
@@ -6,10 +6,11 @@ export function Component(props) {
 
 var protos = {
     setState: function (newState, cb) {
-        console.log("setState called")
-        this._prevState = this.state;
-        this.state = {...this.state, ...newState};
-        updateComponents(this, true, false);
+        enqueSetState(this, newState, cb);
+        // console.log("setState called")
+        // this._prevState = this.state;
+        // this.state = {...this.state, ...newState};
+        // updateComponents(this, true, false);
     },
     forceUpdate: function() {
         console.log("force uopdate")

@@ -3,6 +3,26 @@ import { mountComponents } from "./mountComponents";
 import { unmountComponents } from "./unmountComponents";
 import { diff } from "./diffAlgorithm";
 
+let pendingSetStates = [];
+
+export function enqueSetState(compInstance, newState, cb) {
+    pendingSetStates.push({ compInstance, newState, cb });
+
+    if (typeof Promise !== "undefined") {
+        Promise.resolve().then(processPendingSetStates);
+    }
+}
+
+export function processPendingSetStates() {
+    for (let i = 0;i < pendingSetStates.length;i++) {
+        let { compInstance, newState, cb } = pendingSetStates[i];
+
+        compInstance._prevState = compInstance.state;
+        compInstance.state = typeof newState ==='function' ? {...compInstance.state, ...newState(compInstance.state, compInstance.props) } : {...compInstance.state, ...newState};
+        updateComponents(compInstance, true, false);
+    }
+}
+
 export function updateComponents(compInstance, IS_ORIGIN, IS_FORCE_RENDER) {
     let prevProps = compInstance.props;
     let nextProps = !IS_ORIGIN ? compInstance._nextProps : compInstance.props;
