@@ -7,7 +7,6 @@ export function Component(props) {
 var protos = {
     setState: function (newState, cb) {
         enqueSetState(this, newState, cb);
-        // console.log("setState called")
         // this._prevState = this.state;
         // this.state = {...this.state, ...newState};
         // updateComponents(this, true, false);

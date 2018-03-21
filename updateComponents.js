@@ -14,11 +14,23 @@ export function enqueSetState(compInstance, newState, cb) {
 }
 
 export function processPendingSetStates() {
-    for (let i = 0;i < pendingSetStates.length;i++) {
-        let { compInstance, newState, cb } = pendingSetStates[i];
+    let uniqueRenders = new Set();
+
+    while (pendingSetStates.length > 0) {
+        let pendingSetState = pendingSetStates.shift();
+        let { compInstance, newState, cb } = pendingSetState;
 
         compInstance._prevState = compInstance.state;
         compInstance.state = typeof newState ==='function' ? {...compInstance.state, ...newState(compInstance.state, compInstance.props) } : {...compInstance.state, ...newState};
+        typeof cb === "function" && cb();
+        uniqueRenders.add(pendingSetState);
+    }
+
+    uniqueRenders = Array.from(uniqueRenders);
+
+    for (let i = 0;i < uniqueRenders.length;i++) {
+        let { compInstance } = uniqueRenders[i];
+
         updateComponents(compInstance, true, false);
     }
 }

@@ -1,4 +1,17 @@
 
+export function flatten(a, shallow,r){
+    if(!r){ r = []}
+
+    if (shallow) {
+        return r.concat.apply(r,a);
+    }
+        
+    for(let i=0; i<a.length; i++){
+        Array.isArray(a[i]) ? (flatten(a[i],shallow,r)) : (r.push(a[i]));
+    }
+    return r;
+}
+
 export function createDomElement(elementType) {
     return document.createElement(elementType);
 }
@@ -34,6 +47,14 @@ export function setProp(elem, propKey = "", propValue) {
             eventType = "input";
         }
         elem.addEventListener(eventType, propValue);
+
+        if (elem._prevListeners && elem._prevListeners[eventType] && elem._prevListeners[eventType] !== propValue) {
+            elem.removeEventListener(eventType, elem._prevListeners[eventType]);
+            delete elem._prevListeners[eventType];
+        }
+
+        elem._prevListeners = elem._prevListeners || {};
+        elem._prevListeners[eventType] = propValue;
         return;
     }
     if (propKey === "style") {
