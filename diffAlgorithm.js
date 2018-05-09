@@ -33,6 +33,13 @@ export function diff(dom, element) {
                 newDomRoot.appendChild(dom.firstChild);
             }
 
+            if (dom && typeof dom._componentConstructer === "function" && typeof dom._componentInstance === "object") {
+                // This dom is the root node of some component.
+                newDomRoot._componentInstance = dom._componentInstance;
+                newDomRoot._componentConstructer = dom._componentConstructer;
+                newDomRoot._componentInstance._domNode = newDomRoot;
+            }
+
 			if (dom.parentNode) {
                 dom.parentNode.replaceChild(newDomRoot, dom);
             }
@@ -43,7 +50,8 @@ export function diff(dom, element) {
     else if (typeof element.type === "function") {
         if (dom && dom._componentConstructer && dom._componentConstructer === element.type) {
             
-            dom._componentInstance._nextProps = {...element.props, children: element.children};
+            // dom._componentInstance._nextProps = {...element.props, children: element.children};
+            dom._componentInstance._nextProps = Object.assign({}, element.props, {children: element.children});
             updateComponents(dom._componentInstance);
         }
         else {
@@ -94,7 +102,15 @@ export function diffChildren(dom, element) {
             }
         }
 
-        diff(child, elementChild);
+        // if (child) {
+            diff(child, elementChild);
+        // }
+        // else {
+        //     let newChild = mountComponents(elementChild);
+
+        //     dom.appendChild(newChild);
+        // }
+    
     }
     
     Object.keys(keyedChildren).map(function(key){

@@ -38,7 +38,8 @@ export function mountComponents(element, parentComponentInstance) {
     else if (typeof element.type === "function") {
         // It is a react component
         let compInstance = processComponentMounting(element);
-        let renderedTree = compInstance.render && compInstance.render({...element.props, children: element.children});
+        let renderedTree = compInstance.render && compInstance.render(Object.assign({}, element.props, {children: element.children}));
+        // let renderedTree = compInstance.render && compInstance.render({...element.props, children: element.children});
         let mountedComp = mountComponents(renderedTree, compInstance);
 
         mountedComp._componentInstance = compInstance;
@@ -67,9 +68,11 @@ export function processComponentMounting(element) {
     if (typeof element.type === "function") {
         if (element.type.prototype && element.type.prototype.render) {
             // It is class based component
-            let compInstance = new element.type({...element.props, children: element.children});
+            let compInstance = new element.type(Object.assign({}, element.props, {children: element.children}));
+            // let compInstance = new element.type({...element.props, children: element.children});
 
-            compInstance.props = {...compInstance.props, ...element.props, children: element.children};
+            // compInstance.props = {...compInstance.props, ...element.props, children: element.children};
+            compInstance.props = Object.assign({}, compInstance.props, element.props, {children: element.children});
             typeof compInstance.componentWillMount === "function" && compInstance.componentWillMount();
 
             if (element.props && typeof element.props.ref === "function") {

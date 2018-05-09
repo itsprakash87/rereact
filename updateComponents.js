@@ -21,7 +21,8 @@ export function processPendingSetStates() {
         let { compInstance, newState, cb } = pendingSetState;
 
         compInstance._prevState = compInstance.state;
-        compInstance.state = typeof newState ==='function' ? {...compInstance.state, ...newState(compInstance.state, compInstance.props) } : {...compInstance.state, ...newState};
+        compInstance.state = typeof newState ==='function' ? Object.assign({}, compInstance.state, newState(compInstance.state, compInstance.props)) : Object.assign({}, compInstance.state, newState);
+        // compInstance.state = typeof newState ==='function' ? {...compInstance.state, ...newState(compInstance.state, compInstance.props) } : {...compInstance.state, ...newState};
         typeof cb === "function" && cb();
         uniqueRenders.add(pendingSetState);
     }
@@ -66,7 +67,8 @@ export function updateComponents(compInstance, IS_ORIGIN, IS_FORCE_RENDER) {
             // Root of last tree and new tree are same component. So start updating from that component
             let rootComponent = compInstance._rootComponent;
 
-            rootComponent._nextProps = {...rendered.props, children: rendered.children};
+            rootComponent._nextProps = Object.assign({}, rendered.props, {children: rendered.children});
+            // rootComponent._nextProps = {...rendered.props, children: rendered.children};
             updateComponent(rootComponent);
         }
     }
