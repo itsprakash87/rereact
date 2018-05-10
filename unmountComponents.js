@@ -4,12 +4,13 @@ let unmountQueue = [];
 
 export function unmountComponents(dom) {
     deepnessLevel++;
-
+    console.log("in unmountComponents......................")
+    console.dir(dom)
     if (dom) {
-        let childNodes = dom.childNodes || [];
+        let childNodes = [...dom.childNodes] || [];
 
         childNodes.map(function(node) {
-            unmountComponents()
+            unmountComponents(node)
         });
 
         if (dom && dom._componentInstance) {
@@ -28,6 +29,7 @@ export function unmountComponents(dom) {
 }
 
 export function flushUnmountQueue() {
+    console.log(unmountQueue)
     for(let i in unmountQueue) {
         unmountQueue[i] && unmountQueue[i].componentWillUnmount && unmountQueue[i].componentWillUnmount();
     }

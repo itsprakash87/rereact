@@ -64,8 +64,8 @@ export function diff(dom, element) {
 };
 
 export function diffChildren(dom, element) {
-    let domChildren = dom.childNodes || [];
-    let elementChildren = element.children || [];
+    let domChildren = [...dom.childNodes] || [];
+    let elementChildren = [...element.children] || [];
     let keyedChildren = {}, nonKeyedChildren = [];
 
     for (let i = 0;i < domChildren.length; i++) {
@@ -80,7 +80,7 @@ export function diffChildren(dom, element) {
     }
 
     for (let i = 0;i < elementChildren.length; i++) {
-        let elementChild = elementChildren[i], child;
+        let elementChild = elementChildren[i] || "", child;
 
         if (elementChild && elementChild.props && elementChild.props.key && keyedChildren[elementChild.props.key]) {
             child = keyedChildren[elementChild.props.key];
@@ -90,7 +90,7 @@ export function diffChildren(dom, element) {
             for (let j = 0;j < nonKeyedChildren.length;j++) {
                 if (nonKeyedChildren[j]) {
                     let nonKeyedChild = nonKeyedChildren[j];
-
+                    
                     if ((nonKeyedChild._componentConstructer ===  elementChild.type) || 
                         (nonKeyedChild.nodeName.toLowerCase() === elementChild.type) ||
                         (nonKeyedChild.nodeType === 3 && typeof elementChild === "string")) {
@@ -102,14 +102,19 @@ export function diffChildren(dom, element) {
             }
         }
 
-        // if (child) {
+        if (child) {
             diff(child, elementChild);
-        // }
-        // else {
-        //     let newChild = mountComponents(elementChild);
+        }
+        else {
+            let newChild = mountComponents(elementChild);
 
-        //     dom.appendChild(newChild);
-        // }
+            if (domChildren[i]) {
+                dom.insertBefore(newChild, domChildren[i]);
+            }
+            else {
+                dom.appendChild(newChild);
+            }
+        }
     
     }
     
@@ -123,7 +128,7 @@ export function diffChildren(dom, element) {
 
     for(let i = 0;i < nonKeyedChildren.length;i++) {
         if (nonKeyedChildren[i]) {
-            unmountComponents(nonKeyedChildren);
+            unmountComponents(nonKeyedChildren[i]);
         }
     }
 };

@@ -28,7 +28,7 @@ export function mountComponents(element, parentComponentInstance) {
         setAllProps(elem, element.props);
 
         if (Array.isArray(element.children) && element.children.length > 0) {
-            element.children.map(function(child) {
+            element.children.map(function(child = "") {
                 let mountedChild = mountComponents(child);
                 elem.appendChild(mountedChild);
             });
@@ -45,6 +45,10 @@ export function mountComponents(element, parentComponentInstance) {
         mountedComp._componentInstance = compInstance;
         mountedComp._componentConstructer = compInstance.constructor;
 
+        if (typeof element.props.key !== "undefined") {
+            mountedComp.__key = element.props.key + "";
+        }
+
         compInstance._domNode = mountedComp;
         if (parentComponentInstance) {
             parentComponentInstance._rootComponent = compInstance;
@@ -58,7 +62,8 @@ export function mountComponents(element, parentComponentInstance) {
 
     if (deepnessLevel === 0) {
         // Entire dom tree has been prepared.
-        setTimeout(flushDidMountQueue, 0);
+        flushDidMountQueue();
+        // setTimeout(flushDidMountQueue, 0);
     }
 
     return returnElem;
