@@ -106,4 +106,5 @@ export function flushDidMountQueue() {
     for(let i in didMountQueue) {
         didMountQueue[i] && didMountQueue[i].componentDidMount && didMountQueue[i].componentDidMount();
     }
+    didMountQueue = [];
 }

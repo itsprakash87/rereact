@@ -64,15 +64,17 @@ export function diff(dom, element) {
 };
 
 export function diffChildren(dom, element) {
-    let domChildren = [...dom.childNodes] || [];
+    let domChildren = dom.childNodes || [];
     let elementChildren = [...element.children] || [];
     let keyedChildren = {}, nonKeyedChildren = [];
 
     for (let i = 0;i < domChildren.length; i++) {
         let domChild = domChildren[i];
 
-        if ((domChild && domChild.__key) && (domChild._componentInstance && domChild._componentInstance.props.key)) {
-            keyedChildren[domChild.__key] = domChild;
+        if ((domChild && domChild.__key) || (domChild._componentInstance && domChild._componentInstance.props.key)) {
+            let key = (domChild && domChild.__key) || (domChild._componentInstance && domChild._componentInstance.props.key);
+
+            keyedChildren[key] = domChild;
         }
         else {
             nonKeyedChildren.push(domChild);
@@ -90,6 +92,11 @@ export function diffChildren(dom, element) {
             for (let j = 0;j < nonKeyedChildren.length;j++) {
                 if (nonKeyedChildren[j]) {
                     let nonKeyedChild = nonKeyedChildren[j];
+
+                    if (nonKeyedChild._componentConstructer && typeof elementChild.type !== "function") {
+                        // If previous dom was a component and corresponding new element is not a component then it cannot be a match.
+                        continue;
+                    }
                     
                     if ((nonKeyedChild._componentConstructer ===  elementChild.type) || 
                         (nonKeyedChild.nodeName.toLowerCase() === elementChild.type) ||

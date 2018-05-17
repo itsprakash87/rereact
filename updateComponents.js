@@ -14,6 +14,7 @@ export function enqueSetState(compInstance, newState, cb) {
 }
 
 export function processPendingSetStates() {
+    // TODO:: This Set is useless here. Remove that.
     let uniqueRenders = new Set();
 
     while (pendingSetStates.length > 0) {
@@ -22,7 +23,6 @@ export function processPendingSetStates() {
 
         compInstance._prevState = compInstance.state;
         compInstance.state = typeof newState ==='function' ? Object.assign({}, compInstance.state, newState(compInstance.state, compInstance.props)) : Object.assign({}, compInstance.state, newState);
-        // compInstance.state = typeof newState ==='function' ? {...compInstance.state, ...newState(compInstance.state, compInstance.props) } : {...compInstance.state, ...newState};
         typeof cb === "function" && cb();
         uniqueRenders.add(pendingSetState);
     }
@@ -61,22 +61,20 @@ export function updateComponents(compInstance, IS_ORIGIN, IS_FORCE_RENDER) {
 
     let rendered = compInstance.render();
 
-    if (compInstance._rootComponent) {
         // if last root component was a react component
-        if (rendered.type === "function" && rendered.type === compInstance._rootComponent.constructor) {
-            // Root of last tree and new tree are same component. So start updating from that component
-            let rootComponent = compInstance._rootComponent;
+    if (compInstance._rootComponent && typeof rendered.type === "function" && rendered.type === compInstance._rootComponent.constructor) {
+        // Root of last tree and new tree are same component. So start updating from that component
+        let rootComponent = compInstance._rootComponent;
 
-            rootComponent._nextProps = Object.assign({}, rendered.props, {children: rendered.children});
-            // rootComponent._nextProps = {...rendered.props, children: rendered.children};
-            updateComponent(rootComponent);
-        }
+        rootComponent._nextProps = Object.assign({}, rendered.props, {children: rendered.children});
+        updateComponent(rootComponent);
     }
     else {
         let newDom, oldDom = compInstance._domNode;
 
-        if (rendered.type === "function") {
+        if (typeof rendered.type === "function" || compInstance._rootComponent) {
             // Root component has changed in new tree.
+            delete compInstance._rootComponent;
             newDom = mountComponents(rendered, compInstance);
             if (oldDom && oldDom.parentNode) {
                 oldDom.parentNode.replaceChild(newDom, oldDom);
