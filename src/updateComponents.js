@@ -36,6 +36,10 @@ export function processPendingSetStates() {
     }
 }
 
+export function forceUpdate(compInstance) {
+    compInstance && updateComponents(compInstance, true, true);
+}
+
 export function updateComponents(compInstance, IS_ORIGIN, IS_FORCE_RENDER) {
     let prevProps = compInstance.props;
     let nextProps = !IS_ORIGIN ? compInstance._nextProps : compInstance.props;

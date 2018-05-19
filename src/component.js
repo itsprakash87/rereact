@@ -1,4 +1,4 @@
-import { updateComponents, enqueSetState } from "./updateComponents";
+import { forceUpdate, enqueSetState } from "./updateComponents";
 
 export function Component(props) {
     this.props = props;
@@ -9,7 +9,7 @@ var protos = {
         enqueSetState(this, newState, cb);
     },
     forceUpdate: function() {
-        console.log("force uopdate")
+        forceUpdate(this);
     }
 };
 
