@@ -1,2 +1,2 @@
 # rereact
-An attempt to reimplement react library
+An attempt to reimplement reactjs library

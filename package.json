@@ -1,0 +1,19 @@
+{
+  "name": "@itsprakash87/rereact",
+  "version": "1.0.0",
+  "description": "Reimplementation of reactjs library",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsprakash87/rereact.git"
+  },
+  "author": "Prakash Sharma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itsprakash87/rereact/issues"
+  },
+  "homepage": "https://github.com/itsprakash87/rereact#readme"
+}

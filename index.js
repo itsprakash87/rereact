@@ -1,6 +1,6 @@
-import { createElement } from './createElement';
-import { Component } from './component';
-import { render } from './render';
+import { createElement } from './src/createElement';
+import { Component } from './src/component';
+import { render } from './src/render';
 
 export default {
 	createElement,
@@ -13,3 +13,4 @@ export {
 	Component,
 	render,
 };
+
