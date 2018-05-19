@@ -39,7 +39,6 @@ export function mountComponents(element, parentComponentInstance) {
         // It is a react component
         let compInstance = processComponentMounting(element);
         let renderedTree = compInstance.render && compInstance.render(Object.assign({}, element.props, {children: element.children}));
-        // let renderedTree = compInstance.render && compInstance.render({...element.props, children: element.children});
         let mountedComp = mountComponents(renderedTree, compInstance);
 
         mountedComp._componentInstance = compInstance;
@@ -63,7 +62,6 @@ export function mountComponents(element, parentComponentInstance) {
     if (deepnessLevel === 0) {
         // Entire dom tree has been prepared.
         flushDidMountQueue();
-        // setTimeout(flushDidMountQueue, 0);
     }
 
     return returnElem;
@@ -74,9 +72,7 @@ export function processComponentMounting(element) {
         if (element.type.prototype && element.type.prototype.render) {
             // It is class based component
             let compInstance = new element.type(Object.assign({}, element.props, {children: element.children}));
-            // let compInstance = new element.type({...element.props, children: element.children});
 
-            // compInstance.props = {...compInstance.props, ...element.props, children: element.children};
             compInstance.props = Object.assign({}, compInstance.props, element.props, {children: element.children});
             typeof compInstance.componentWillMount === "function" && compInstance.componentWillMount();
 
@@ -93,7 +89,6 @@ export function processComponentMounting(element) {
             comp.render = renderFunctionalComponent.bind(comp, element.type);
 
             return comp;
-            // return element.type({...element.props, children: element.children})
         }
     }
 }

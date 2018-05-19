@@ -50,7 +50,6 @@ export function diff(dom, element) {
     else if (typeof element.type === "function") {
         if (dom && dom._componentConstructer && dom._componentConstructer === element.type) {
             
-            // dom._componentInstance._nextProps = {...element.props, children: element.children};
             dom._componentInstance._nextProps = Object.assign({}, element.props, {children: element.children});
             updateComponents(dom._componentInstance);
         }
