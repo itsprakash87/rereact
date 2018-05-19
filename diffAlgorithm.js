@@ -71,7 +71,7 @@ export function diffChildren(dom, element) {
     for (let i = 0;i < domChildren.length; i++) {
         let domChild = domChildren[i];
 
-        if ((domChild && domChild.__key) || (domChild._componentInstance && domChild._componentInstance.props.key)) {
+        if ((domChild && domChild.__key) || (domChild._componentInstance && domChild._componentInstance.props && domChild._componentInstance.props.key)) {
             let key = (domChild && domChild.__key) || (domChild._componentInstance && domChild._componentInstance.props.key);
 
             keyedChildren[key] = domChild;
