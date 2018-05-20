@@ -1,0 +1,9 @@
+{
+  "name": "calculator",
+  "description": "",
+  "homepage": "https://stackblitz.com/edit/js-tigrjk",
+  "dependencies": {
+    "@itsprakash87/rereact": "1.0.0"
+  },
+  "version": "1.0.0"
+}

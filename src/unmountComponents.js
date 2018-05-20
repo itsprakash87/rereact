@@ -6,7 +6,7 @@ export function unmountComponents(dom) {
     deepnessLevel++;
 
     if (dom) {
-        let childNodes = [...dom.childNodes] || [];
+        let childNodes = Array.prototype.slice.call(dom.childNodes, 0) || [];
 
         childNodes.map(function(node) {
             unmountComponents(node)
