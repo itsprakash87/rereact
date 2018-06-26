@@ -1,6 +1,8 @@
 # Rereact
 A reimplementation of `reactjs` library. **It is made for learning purpose.**
 
+The aim of this library is to simplify the code of `reactjs` library to better understand `react` internals.
+
 It uses diff algorithm (just like react) to update only those dom nodes which needs to be updated.
 
 [Calculator](https://stackblitz.com/edit/js-tigrjk) is an example application which is made using this `rereact` library.
